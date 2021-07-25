@@ -7,3 +7,5 @@ File description:
  * __data_dm.txt__ contains information on decision-making agents which represents countries. Each row corresponds to a country and contains the following information: country ID (ISO-2 code), country population, initial susceptible population, initial infectious population, disease transmission rate (beta), disease recovery rate (gamma), per-period vaccination capacity, followed by a list of node IDs that represent nodes controlled by this country.
 
  * __data_mobility.txt__ contains information on the human mobility flows in the rasterized world network. Each row is a link (i,j) in the world network and contains the following information: node ID of head node (i), node ID of tail node (j), mobility rate (p_ij) and a binary value indicating whether nodes i and j are controlled by the same country (1) or not (0).
+
+* The folder __scenario_data__ contains 300 scenarios used in the study.
