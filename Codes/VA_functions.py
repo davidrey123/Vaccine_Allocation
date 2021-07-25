@@ -122,7 +122,7 @@ def initialization2(N,node2dm,popdm,S0,I0):
     lbd = 0.01    
     return S,I,R,D,obs,ma_size,xub,ratio,lbd
       
-def simulation2(t,x,te,N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm):
+def simulation(t,x,te,N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm):
     #---update local compartments using SIRD dynamics
     S[t+1] = {}
     I[t+1] = {}
@@ -407,7 +407,7 @@ def optimize_scenario_TS(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -453,7 +453,7 @@ def optimize_scenario_GY(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -500,7 +500,7 @@ def optimize_scenario_MA(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -547,7 +547,7 @@ def optimize_scenario_PB(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
