@@ -88,7 +88,7 @@ def initialization(N,node2dm,popdm,S0,I0):
     #---total flow to population ratio
     ratio = 0.00927040328665764
     
-    #---death rate (in %)
+    #---death rate
     lbd = 0.01
         
     return S,I,R,D,a,b,xub,ratio,lbd   
@@ -118,8 +118,9 @@ def initialization2(N,node2dm,popdm,S0,I0):
     #---total flow to population ratio
     ratio = 0.00927040328665764
     
-    #---death rate (in %)
-    lbd = 0.01    
+    #---death rate
+    lbd = 0.01   
+
     return S,I,R,D,obs,ma_size,xub,ratio,lbd
       
 def simulation(t,x,te,N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm):
@@ -291,28 +292,7 @@ def optimize_PB(k,t,xub,dm,P,B):
             x[i] = A/P[i]
         A = A - P[i]*x[i]
         if A < 1e-3: break  
-    return x
-    
-def optimize_SO(t,xub,th,N,dm,S,I,p,node2dm,bg,ratio,P,B):
-    loss = {i:0.0 for i in N}
-    for i in N:
-        loss[i] = loss[i] - S[t][i]*th[i] + bg[node2dm[i]][0]*S[t][i]*I[t][i]*th[i]
-        for j in N[i]:
-            loss[i] = loss[i] + ratio*p[i,j]*S[t][i]*th[i]
-            loss[j] = loss[j] - ratio*p[i,j]*S[t][j]*th[j]
-
-    v2w = {i:(-loss[i]/P[i]) for i in N}
-    N_sorted = sorted([i for i in N], key=lambda X: v2w[X], reverse=True)
-    x = {i:0.0 for i in N}
-    A = sum(B[k] for k in dm)
-    for i in N_sorted:
-        if P[i]*xub[i] <= A:
-            x[i] = xub[i]
-        else:
-            x[i] = A/P[i]
-        A = A - P[i]*x[i]
-        if A < 1e-3: break
-    return x     
+    return x   
     
 def write_data_dm(filename,dm,P,S,I,R,D,T):
     Sopt = {k:[] for k in dm}
