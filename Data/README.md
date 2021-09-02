@@ -10,4 +10,4 @@ File description:
 
 * The folder __scenario_data__ contains 300 randomly generated scenarios used in the study. Scenario files are named in the format __X104_EP_ID.txt__ where EP represents the level of uncertainty in the vaccine administration process (epsilon) written in percent and ID is the identifier of this scenario. Three levels of uncertainty are considered (10%, 20% and 30%) and 100 random scenarios are available for each level of uncertainty. In each scenario file, the top row contains the ID of all nodes of the world network. The second row contains node-based mean vaccine efficiency rates (theta_i) which are unknown to decision-making agents (countries); and the next 104 rows contain node-based observed mean vaccine efficiency rates corresponding to realizations of the random variables (theta_i(t)) for all 104 time periods modeled in this study.
 
-The file Data_countries.pdf contains a summary of country-based data used in this study.
+The file Data_countries.pdf contains a summary of country-based data used in this study. The file Table1_all_countries.pdf contains an extended version of Table 1 in the paper with all countries.
