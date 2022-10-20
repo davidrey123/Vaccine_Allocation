@@ -86,9 +86,10 @@ def initialization(N,node2dm,popdm,S0,I0):
     xub = {i:1.0 for i in N}
     
     #---total flow to population ratio
-    ratio = 0.00927040328665764
+    ratio = 0.02076769916167938 # D=100 km
+    #ratio = 0.00927040328665764 # D=250 km
     
-    #---death rate
+    #---death rate (in %)
     lbd = 0.01
         
     return S,I,R,D,a,b,xub,ratio,lbd   
@@ -116,14 +117,14 @@ def initialization2(N,node2dm,popdm,S0,I0):
     xub = {i:1.0 for i in N}
     
     #---total flow to population ratio
-    ratio = 0.00927040328665764
+    ratio = 0.02076769916167938 # D=100 km
+    #ratio = 0.00927040328665764 # D=250 km
     
-    #---death rate
-    lbd = 0.01   
-
+    #---death rate (in %)
+    lbd = 0.01    
     return S,I,R,D,obs,ma_size,xub,ratio,lbd
       
-def simulation(t,x,te,N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm):
+def simulation2(t,x,te,N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm):
     #---update local compartments using SIRD dynamics
     S[t+1] = {}
     I[t+1] = {}
@@ -292,7 +293,28 @@ def optimize_PB(k,t,xub,dm,P,B):
             x[i] = A/P[i]
         A = A - P[i]*x[i]
         if A < 1e-3: break  
-    return x   
+    return x
+    
+def optimize_SO(t,xub,th,N,dm,S,I,p,node2dm,bg,ratio,P,B):
+    loss = {i:0.0 for i in N}
+    for i in N:
+        loss[i] = loss[i] - S[t][i]*th[i] + bg[node2dm[i]][0]*S[t][i]*I[t][i]*th[i]
+        for j in N[i]:
+            loss[i] = loss[i] + ratio*p[i,j]*S[t][i]*th[i]
+            loss[j] = loss[j] - ratio*p[i,j]*S[t][j]*th[j]
+
+    v2w = {i:(-loss[i]/P[i]) for i in N}
+    N_sorted = sorted([i for i in N], key=lambda X: v2w[X], reverse=True)
+    x = {i:0.0 for i in N}
+    A = sum(B[k] for k in dm)
+    for i in N_sorted:
+        if P[i]*xub[i] <= A:
+            x[i] = xub[i]
+        else:
+            x[i] = A/P[i]
+        A = A - P[i]*x[i]
+        if A < 1e-3: break
+    return x     
     
 def write_data_dm(filename,dm,P,S,I,R,D,T):
     Sopt = {k:[] for k in dm}
@@ -387,7 +409,7 @@ def optimize_scenario_TS(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -433,7 +455,7 @@ def optimize_scenario_GY(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -480,7 +502,7 @@ def optimize_scenario_MA(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -527,7 +549,7 @@ def optimize_scenario_PB(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
                 xub[i] = 1.0 - sum(xall[tt][i] for tt in range(max(t-PM[i]+1,1),t+1))
 
         #---apply action
-        S,I,R,D,BS,pdmI = simulation(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
+        S,I,R,D,BS,pdmI = simulation2(t,xall[t],theta_env[t],N,S,I,R,D,node2dm,bg,lbd,p,ratio,dm)
         
         #---budget sharing
         B = share_budget(t,dm,B0,BS,pdmI,cap,D,mode)
@@ -540,5 +562,6 @@ def optimize_scenario_PB(filename,N,P,PM,node2dm,p,same,dm,popdm,S0,I0,bg,cap,cB
     
     file.close()    
     
-    return S,I,R,D,xall,T
+    return S,I,R,D,xall,T     
+
 	
