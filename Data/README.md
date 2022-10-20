@@ -1,4 +1,4 @@
-Data used for this vaccine allocation study can be downloaded at https://bit.ly/3zexGiu
+Data used for this vaccine allocation study can be downloaded at https://skema-my.sharepoint.com/:u:/g/personal/david_rey_skema_edu/EQRH4rTea-RAovLL0ykcerEBpXdILOI3v3jst9EymiYxuQ?e=vvg8zC
 
 File description:
 
